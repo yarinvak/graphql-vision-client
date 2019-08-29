@@ -1,7 +1,9 @@
-import {ApolloServer, gql} from 'apollo-server';
-
+import {gql} from 'apollo-server';
+import {ApolloServer} from 'apollo-server-express';
 import {request} from 'graphql-request';
-
+import path from "path";
+import express from 'express';
+import cors from 'cors';
 // This is a (sample) collection of books we'll be able to query
 // the GraphQL server for.  A more complete example might fetch
 // from an existing data source like a REST API or database.
@@ -46,17 +48,16 @@ const trace = `mutation($tracing: TracerInput) {
   addTracing(tracing: $tracing)
 }`;
 
-// In the most basic sense, the ApolloServer can be started
-// by passing type definitions (typeDefs) and the resolvers
-// responsible for fetching the data for those types.
+const app = express();
+
+app.get('/keepAlive', cors(), (req, res) => res.sendStatus(200));
+
 const server = new ApolloServer({
     typeDefs, resolvers, tracing: true, plugins: [{
-        requestDidStart({}){
+        requestDidStart({}) {
             return {
-                willSendResponse({response}){
-                    console.log(JSON.stringify(response.extensions.tracing));
-                    request('http://localhost:4000/graphql', trace, {tracing: response.extensions.tracing}).then(()=>{
-                        console.log('success');
+                willSendResponse({response}) {
+                    request('http://localhost:4000/graphql', trace, {tracing: response.extensions.tracing}).then(() => {
                     });
                 }
             }
@@ -64,8 +65,10 @@ const server = new ApolloServer({
     }]
 });
 
+server.applyMiddleware({app});
+
 // This `listen` method launches a web-server.  Existing apps
 // can utilize middleware options, which we'll discuss later.
-server.listen({port: 4002}).then(({url}) => {
-    console.log(`🚀  Server ready at ${url}`);
-});
+app.listen(4002, (() => {
+    console.log(`🚀  Server ready`);
+}));
