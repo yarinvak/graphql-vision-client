@@ -55,7 +55,7 @@ const server = new ApolloServer({
             return {
                 willSendResponse({response}){
                     console.log(JSON.stringify(response.extensions.tracing));
-                    request('http://localhost:4000/v1/graphql', trace, {tracing: response.extensions.tracing}).then(()=>{
+                    request('http://localhost:4000/graphql', trace, {tracing: response.extensions.tracing}).then(()=>{
                         console.log('success');
                     });
                 }
