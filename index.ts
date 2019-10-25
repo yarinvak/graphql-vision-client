@@ -1,7 +1,6 @@
 import {gql} from 'apollo-server';
 import {ApolloServer} from 'apollo-server-express';
 import {request} from 'graphql-request';
-import path from "path";
 import express from 'express';
 import cors from 'cors';
 // This is a (sample) collection of books we'll be able to query
@@ -67,8 +66,7 @@ const server = new ApolloServer({
 
 server.applyMiddleware({app});
 
-// This `listen` method launches a web-server.  Existing apps
-// can utilize middleware options, which we'll discuss later.
-app.listen(4002, (() => {
-    console.log(`🚀  Server ready`);
+const port = 4002;
+app.listen(port, (() => {
+    console.log(`🚀  Server ready at http://localhost:${port}/graphql`);
 }));
