@@ -1,11 +1,9 @@
 import {gql} from 'apollo-server';
 import {ApolloServer} from 'apollo-server-express';
-import {request} from 'graphql-request';
 import express from 'express';
 import cors from 'cors';
-// This is a (sample) collection of books we'll be able to query
-// the GraphQL server for.  A more complete example might fetch
-// from an existing data source like a REST API or database.
+import GraphQLVisionPlugin from 'graphql-vision-plugin';
+
 const books = [
     {
         title: 'Harry Potter and the Chamber of Secrets',
@@ -17,51 +15,28 @@ const books = [
     },
 ];
 
-// Type definitions define the "shape" of your data and specify
-// which ways the data can be fetched from the GraphQL server.
 const typeDefs = gql`
-    # Comments in GraphQL are defined with the hash (#) symbol.
-
-    # This "Book" type can be used in other type declarations.
     type Book {
         title: String
         author: String
     }
-
-    # The "Query" type is the root of all GraphQL queries.
-    # (A "Mutation" type will be covered later on.)
     type Query {
         books: [Book]
     }
 `;
 
-// Resolvers define the technique for fetching the types in the
-// schema.  We'll retrieve books from the "books" array above.
 const resolvers = {
     Query: {
         books: () => books,
     },
 };
 
-const trace = `mutation($tracing: TracerInput) {
-  addTracing(tracing: $tracing)
-}`;
-
 const app = express();
 
 app.get('/keepAlive', cors(), (req, res) => res.sendStatus(200));
 
 const server = new ApolloServer({
-    typeDefs, resolvers, tracing: true, plugins: [{
-        requestDidStart({}) {
-            return {
-                willSendResponse({response}) {
-                    request('http://localhost:4000/graphql', trace, {tracing: response.extensions.tracing}).then(() => {
-                    });
-                }
-            }
-        }
-    }]
+    typeDefs, resolvers, tracing: true, plugins: [new GraphQLVisionPlugin('http://localhost:4003/graphql')]
 });
 
 server.applyMiddleware({app});
