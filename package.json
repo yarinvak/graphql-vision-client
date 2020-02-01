@@ -15,6 +15,6 @@
     "apollo-server": "^2.9.0",
     "graphql": "^14.5.3",
     "graphql-request": "^1.8.2",
-    "graphql-vision-plugin": "^0.1.2"
+    "graphql-vision-plugin": "^0.3.0"
   }
 }
