@@ -12,9 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "apollo-server": "^2.9.0",
-    "graphql": "^14.5.3",
+    "apollo-server": "^2.13.0",
+    "graphql": "^14.6.0",
     "graphql-request": "^1.8.2",
-    "graphql-vision-plugin": "^0.4.0"
+    "graphql-vision-plugin": "^0.4.3"
   }
 }
